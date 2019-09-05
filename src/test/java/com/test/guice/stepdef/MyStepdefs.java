@@ -30,10 +30,4 @@ public class MyStepdefs {
         System.out.println("working");
     }
 
-
-//    @When("^I test something$")
-//    public void iTestSomething() throws Throwable {
-//
-//        System.out.println(world.navigateWebsite.getTest());
-//    }
 }
