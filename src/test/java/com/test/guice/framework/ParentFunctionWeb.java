@@ -1,24 +1,25 @@
 package com.test.guice.framework;
 
+import com.test.guice.framework.stringutilities.StringUtility;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ParentFunctionWeb {
 
-    protected static WebDriver driver;
+//    private ParentFunctionWeb(){
+//
+//        throw new IllegalStateException();
+//    }
+    private static WebDriver driver=null;
 
-    public void setDriver(){
+    public static void setDriver(){
 
-        if(driver==null){
             ChromeDriverManager.getInstance(ChromeDriver.class).setup();
             driver = new ChromeDriver();
-        }
     }
 
-    public WebDriver getDriver(){
+    public static WebDriver getDriver(){
 
         return driver;
     }
