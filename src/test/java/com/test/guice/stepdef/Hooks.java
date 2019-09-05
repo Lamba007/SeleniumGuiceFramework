@@ -9,7 +9,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
 
-public class Hooks extends ParentFunctionWeb{
+public class Hooks extends ParentFunctionWeb {
 
     private static WebDriver driver;
     private HelperMethods helperMethods;
@@ -19,15 +19,14 @@ public class Hooks extends ParentFunctionWeb{
     public void beforeScenario() {
 
         ParentFunctionWeb.setDriver();
-        driver=ParentFunctionWeb.getDriver();
+        driver = ParentFunctionWeb.getDriver();
 
-        helperMethods= new HelperMethods();
+        helperMethods = new HelperMethods();
 
         helperMethods.assignDriver(driver);
 
         driver.get("http://automationpractice.com/index.php");
         driver.manage().window().maximize();
-
     }
 
     @After

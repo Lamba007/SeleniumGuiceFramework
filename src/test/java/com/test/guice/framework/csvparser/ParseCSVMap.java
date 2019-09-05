@@ -1,6 +1,5 @@
 package com.test.guice.framework.csvparser;
 
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,25 +8,43 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class ParseCSVMap {
+public class ParseCSVMap<T> {
 
     private static BufferedReader csvReader = null;
     private static LinkedHashMap <String, String> map;
     private static DataResolveIn dataResolveIn = new DataResolveIn();
 
 
-    private static void readCsv() {
+    public void resolveData(T modelClass, String filePath, String scenarioName) {
 
-        String pathToCsv = "src\\test\\resources\\qa.csv";
+        readCsv(filePath);
+
+        LinkedHashMap <String, String> dataMap = null;
 
         try {
-            csvReader = new BufferedReader(new FileReader(pathToCsv));
+            dataMap = fetchScenarioValues(scenarioName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(dataMap);
+        try {
+            parseDataToClass(modelClass, dataMap);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readCsv(String filePath) {
+
+        try {
+            csvReader = new BufferedReader(new FileReader(filePath));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private static LinkedHashMap <String, String> generateCsvMap(String scenarioName) throws IOException {
+    private LinkedHashMap <String, String> fetchScenarioValues(String scenarioName) throws IOException {
         map = new LinkedHashMap <>();
 
         String row;
@@ -38,17 +55,18 @@ public class ParseCSVMap {
 
             String[] data = row.split(",");
 
-            String[] data1 = null;
+            String[] dataRow = null;
 
             if (count == 0) {
                 headerRow = row;
 
-            } else if (data[0].equals(scenarioName)) {
+            } else if (data[0].equalsIgnoreCase(scenarioName)) {
 
                 int i = 0;
                 while (i < data.length) {
-                    data1 = headerRow.split(",");
-                    map.put(data1[i], data[i]);
+                    dataRow = headerRow.split(",");
+                    String key=capitalize(dataRow[i].trim().replaceAll("\\s","").toLowerCase());
+                    map.put(key, data[i]);
                     i++;
                 }
             }
@@ -58,90 +76,50 @@ public class ParseCSVMap {
         return map;
     }
 
-    public static void main(String[] args) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-
-        readCsv();
-        LinkedHashMap <String, String> dataMap = generateCsvMap("create a PM with cost");
-
-        System.out.println(dataMap);
-        csvDataResolver(dataMap);
-
-    }
-
-    public static void csvDataResolver(HashMap <String, String> testList) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    private void parseDataToClass(T modalObjectRef, HashMap <String, String> testList) throws InvocationTargetException, IllegalAccessException {
 
 
-        Class cname = dataResolveIn.getClass();
-        cname.getName();
+        Class <?> cname = modalObjectRef.getClass();
 
         Method modalClass;
 
         System.out.println(cname);
 
-        List <String> keyList = new ArrayList <>();
+        List <String> listKeys = new ArrayList <>();
+        listKeys.addAll(testList.keySet());
 
-        keyList.addAll(testList.values());
-
-
-        List <String> keyValue = new ArrayList <>();
-
-        keyValue.addAll(testList.values());
-
-
+        List <String> listValues = new ArrayList <>();
+        listValues.addAll(testList.values());
 
         int count = 0;
-        while (count < keyList.size()) {
+        while (count < listKeys.size()) {
 
-            modalClass = cname.getMethod("set" + keyList.get(count), String.class);
-            modalClass.invoke(dataResolveIn, keyValue.get(count));
+            try {
+                modalClass = cname.getMethod("set" + listKeys.get(count), String.class);
+                modalClass.invoke(modalObjectRef, listValues.get(count));
 
-            modalClass = DataResolveIn.class.getMethod("get" + keyList.get(count));
-            System.out.println(keyList.get(count) + "-" + modalClass.invoke(dataResolveIn));
+                modalClass = cname.getMethod("get" + listKeys.get(count));
+                System.out.println(listKeys.get(count) + "-" + modalClass.invoke(modalObjectRef));
+            } catch (NoSuchMethodException e) {
+            }
 
             count++;
         }
     }
 
-    public static void resolverDataCsv(Class modalObjectRef, String csvName,String scenarioName){
-
-        readCsv();
-
-        LinkedHashMap <String, String> dataMap = null;
-        try {
-            dataMap = generateCsvMap(scenarioName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(dataMap);
-        try {
-            csvDataResolver(dataMap);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+    private static String capitalize(String str)
+    {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static void dataResolver(DataResolveIn dataresolvein) throws IOException {
+    public static void main(String[] args) {
 
+        String test="this  IS my test";
 
-//        dataresolvein= new DataResolveIn();
-        readCsv();
+        String test1 = test.replaceAll("\\s","");
+        System.out.println(test1);
 
-        String t = "getFname";
-        //String s=split(",",list.get(0))
-        try {
-            Method method = DataResolveIn.class.getDeclaredMethod("Method" + t, String.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-
-//        Map<String,String> map= new HashMap <>();
-
-
+        String key=capitalize(test.trim().replaceAll("\\s","").toLowerCase());
     }
 }
 

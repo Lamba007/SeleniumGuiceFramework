@@ -4,8 +4,8 @@ import org.junit.runner.RunWith;
 
 
 @CucumberOptions(
-        features = {"src/csvDataResolver/java/features"},
-        glue = {"com.csvDataResolver.guice.stepdef"},
+        features = {"src/parseDataToClass/java/features"},
+        glue = {"com.parseDataToClass.guice.stepdef"},
         tags = "@smoke",
         monochrome = true
 )

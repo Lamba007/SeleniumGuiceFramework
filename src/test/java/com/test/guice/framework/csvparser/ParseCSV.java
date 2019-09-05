@@ -82,7 +82,6 @@ public class ParseCSV {
 
         keyList.addAll(testList.values());
 
-
         List <String> keyValue = new ArrayList <>();
 
         keyValue.addAll(testList.values());
@@ -91,7 +90,6 @@ public class ParseCSV {
 
         int count = 0;
         while (count < keyList.size()) {
-
             modalClass = cname.getMethod("set" + keyList.get(count), String.class);
             modalClass.invoke(dataResolveIn, keyValue.get(count));
 
