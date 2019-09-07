@@ -3,7 +3,8 @@
 
 Feature: Navigate on the homepage
 
+  @smoke
   Scenario: I navigate through the Women tab
-    Given My first stepdef
+    Given Initialise for navigation2
     Given I navigate path Women>Tops>T-shirts
     When I test something

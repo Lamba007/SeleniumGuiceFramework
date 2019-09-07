@@ -1,5 +1,11 @@
 package com.test.guice.framework.csvparser;
 
+import com.sun.istack.internal.NotNull;
+import com.test.guice.framework.ScenarioName;
+import com.test.guice.stepdef.Hooks;
+import cucumber.api.Scenario;
+import net.bytebuddy.implementation.bytecode.Throw;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,11 +19,15 @@ public class ParseCSVMap<T> {
     private static BufferedReader csvReader = null;
     private static LinkedHashMap <String, String> map;
     private static DataResolveIn dataResolveIn = new DataResolveIn();
+    private String fixedPath = "src\\test\\resources\\";
 
+    //overloaded
+    public void resolveData(T modelClass, String filePath) {
 
-    public void resolveData(T modelClass, String filePath, String scenarioName) {
+        String scenarioName = ScenarioName.getScenario();
+        System.out.println(ScenarioName.getScenario());
 
-        readCsv(filePath);
+        readCsv(fixedPath+filePath);
 
         LinkedHashMap <String, String> dataMap = null;
 
@@ -28,6 +38,31 @@ public class ParseCSVMap<T> {
         }
 
         System.out.println(dataMap);
+        try {
+            parseDataToClass(modelClass, dataMap);
+        } catch (InvocationTargetException | IllegalAccessException  | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void resolveData(T modelClass, String filePath, String scenarioName) {
+
+        readCsv(fixedPath+filePath);
+
+        LinkedHashMap <String, String> dataMap = null;
+
+        try {
+            dataMap = fetchScenarioValues(scenarioName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(dataMap);
+        if(dataMap==null){
+
+            throw new NullPointerException();
+        }
         try {
             parseDataToClass(modelClass, dataMap);
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -51,7 +86,8 @@ public class ParseCSVMap<T> {
         int count = 0;
         String headerRow = null;
         assert csvReader != null;
-        while ((row = csvReader.readLine()) != null) {
+        boolean found=true;
+        while ((row = csvReader.readLine()) != null && found) {
 
             String[] data = row.split(",");
 
@@ -64,8 +100,10 @@ public class ParseCSVMap<T> {
 
                 int i = 0;
                 while (i < data.length) {
+                    found=false;
+                    //Add a flag here to break the execution once the scenario is found
                     dataRow = headerRow.split(",");
-                    String key=capitalize(dataRow[i].trim().replaceAll("\\s","").toLowerCase());
+                    String key = capitalize(dataRow[i].trim().replaceAll("\\s", "").toLowerCase());
                     map.put(key, data[i]);
                     i++;
                 }
@@ -107,19 +145,18 @@ public class ParseCSVMap<T> {
         }
     }
 
-    private static String capitalize(String str)
-    {
+    private static String capitalize(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     public static void main(String[] args) {
 
-        String test="this  IS my test";
+        String test = "this  IS my test";
 
-        String test1 = test.replaceAll("\\s","");
+        String test1 = test.replaceAll("\\s", "");
         System.out.println(test1);
 
-        String key=capitalize(test.trim().replaceAll("\\s","").toLowerCase());
+        String key = capitalize(test.trim().replaceAll("\\s", "").toLowerCase());
     }
 }
 

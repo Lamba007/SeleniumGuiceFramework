@@ -3,9 +3,9 @@
 
 Feature: Add Items to cart
 
-  Scenario: Select a dress and add to the cart
-    Given Initialise for navigation2
-    And I search on website for dress
-    And I assert the result count
+  Scenario: Select a dress and assert result count
+    Given Initialise add to cart
+    And I search on website for an item
+
 
 

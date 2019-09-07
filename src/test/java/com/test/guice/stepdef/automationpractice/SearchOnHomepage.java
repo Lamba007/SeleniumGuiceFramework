@@ -2,7 +2,7 @@ package com.test.guice.stepdef.automationpractice;
 
 import com.google.inject.Inject;
 import com.test.guice.TestContext;
-import com.test.guice.framework.csvparser.DataResolveIn2;
+import com.test.guice.framework.csvparser.AddCartModal;
 import com.test.guice.framework.csvparser.ParseCSVMap;
 import cucumber.api.java.en.Given;
 import cucumber.api.java8.En;
@@ -17,14 +17,15 @@ public class SearchOnHomepage implements En {
     }
 
 
-    @Given("^I search on website for (.+)")
-    public void iSearchOnWebsite(String item){
+    @Given("^I search on website for an item")
+    public void iSearchOnWebsite(){
 
-        DataResolveIn2 dataResolveIn= new DataResolveIn2();
+        AddCartModal addCartModal = new AddCartModal(); //Modal
         ParseCSVMap parseCSVMap= new ParseCSVMap();
-        parseCSVMap.resolveData(dataResolveIn,"src\\test\\resources\\qa.csv","create a PM with cost");
 
-        testContext.searchItem.searchInToolbar(testContext,dataResolveIn.getFname());
+        parseCSVMap.resolveData(addCartModal,"qa.csv");
+
+        testContext.searchItem.searchInToolbar(testContext,addCartModal.getSearchitem());
         testContext.searchItem.clickSearch(testContext);
     }
 }

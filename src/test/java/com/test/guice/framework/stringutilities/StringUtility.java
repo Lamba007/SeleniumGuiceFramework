@@ -56,4 +56,16 @@ public final class StringUtility {
         return value.split(delimeter);
 
     }
+
+    public static String randomString(int count) {
+
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxxtz";
+
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int) (Math.random() * letters.length());
+            builder.append(letters.charAt(character));
+        }
+        return builder.toString();
+    }
 }

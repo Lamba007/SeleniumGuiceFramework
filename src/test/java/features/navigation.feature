@@ -7,7 +7,6 @@ Feature: Navigate on the homepage
     And My first stepdef 2
     Given I navigate to the path Women>Tops>T-shirts
 
-
   @smoke
   Scenario: I navigate through the Women tab2
     And Initialise for navigation
@@ -16,5 +15,5 @@ Feature: Navigate on the homepage
   @smoke
   Scenario: I search for items
     And Initialise for navigation
-    Given I search on website for dress
+    Given I search on website for an item
 

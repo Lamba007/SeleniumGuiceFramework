@@ -30,6 +30,21 @@ public class FindElement {
 
     }
 
+    public WebElement selectWebElement(By locator){
+
+        wait.until(d->driver.findElement(locator));
+        //wait.until(ExpectedConditions.elementToBeSelected(locator));
+
+        element = driver.findElement(locator);
+
+        String jsHighLighter = "arguments[0].style.border='3px dotted green'";
+
+        if (driver != null) {
+            ((JavascriptExecutor) driver).executeScript(jsHighLighter, element);
+        }
+
+        return element;
+    }
 
     public WebElement webElement(By locator) {
 
@@ -44,7 +59,7 @@ public class FindElement {
             ((JavascriptExecutor) driver).executeScript(jsHighLighter, element);
         }
 
-        return driver.findElement(locator);
+        return element;
     }
 
     public void moveToElement(By locator) {
